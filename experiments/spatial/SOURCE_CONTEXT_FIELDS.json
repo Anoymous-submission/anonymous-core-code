@@ -1,0 +1,57 @@
+{
+  "fields": {
+    "gate": [
+      "start_x",
+      "start_y",
+      "start_z",
+      "waypoint_x",
+      "waypoint_y",
+      "waypoint_z",
+      "goal_x",
+      "goal_y",
+      "goal_z",
+      "known_source_mass"
+    ],
+    "bank": [
+      "start_x",
+      "start_y",
+      "start_z",
+      "goal_x",
+      "goal_y",
+      "goal_z",
+      "panel_center_x",
+      "panel_center_y",
+      "panel_center_z",
+      "panel_yaw",
+      "panel_pitch",
+      "known_source_mass"
+    ],
+    "ramp": [
+      "ramp_center_x",
+      "ramp_center_y",
+      "ramp_center_z",
+      "ramp_tilt",
+      "ramp_yaw",
+      "ramp_half_length",
+      "goal_x",
+      "goal_y",
+      "goal_z",
+      "known_source_mass",
+      "start_local_x",
+      "start_local_y"
+    ]
+  },
+  "padding_to": 16,
+  "padding_value": 0,
+  "preprocessing": "identity float32; no fitted transformation",
+  "forbidden": [
+    "hidden_drag",
+    "hidden_wind",
+    "hidden_damping",
+    "hidden_friction",
+    "response_positions",
+    "source_expert_action",
+    "solver_results",
+    "learner_target_action"
+  ]
+}

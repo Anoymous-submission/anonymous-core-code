@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "demonstration-modality"
+version = "0.2.1"
+description = "Core models and controlled tasks for embodied in-context learning"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {file = "LICENSE"}
+dependencies = [
+  "torch>=2.7,<3", "numpy>=1.26,<3", "einops>=0.8,<1",
+  "safetensors>=0.5,<1", "rich>=13,<16", "tqdm>=4.66,<5",
+  "h5py>=3.11,<4", "opencv-python-headless>=4.10,<6",
+]
+
+[project.optional-dependencies]
+simulation = ["mujoco>=3.3,<4", "scipy>=1.13,<2", "Pillow>=10,<13"]
+metrics = ["lpips>=0.1.4,<0.2", "pytorch-msssim>=1,<2", "torchvision>=0.22,<1"]
+test = ["pytest>=8,<10"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["fasterwam*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.black]
+line-length = 100
+target-version = ["py310"]

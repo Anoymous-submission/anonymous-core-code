@@ -1,0 +1,261 @@
+{
+  "version": 5,
+  "status": "prespecified_before_formal_training",
+  "tasks": [
+    "gate",
+    "bank",
+    "ramp"
+  ],
+  "modes": [
+    "none",
+    "motion",
+    "video",
+    "full"
+  ],
+  "training_seeds": [
+    0,
+    1,
+    2
+  ],
+  "checkpoint": "fixed_final_4096",
+  "validation_families_per_task": 128,
+  "test_families_per_task": 256,
+  "records_per_family": 8,
+  "data_seeds": {
+    "validation_id": {
+      "gate": 2309251000,
+      "bank": 2309252000,
+      "ramp": 2309253000
+    },
+    "test_id": {
+      "gate": 2309261000,
+      "bank": 2309262000,
+      "ramp": 2309263000
+    },
+    "validation_geometry": {
+      "gate": 2309271000,
+      "bank": 2309272000,
+      "ramp": 2309273000
+    },
+    "test_geometry": {
+      "gate": 2309281000,
+      "bank": 2309282000,
+      "ramp": 2309283000
+    }
+  },
+  "conditions": [
+    {
+      "name": "id_matching",
+      "target": "id",
+      "context": "matching"
+    },
+    {
+      "name": "id_absent",
+      "target": "id",
+      "context": "absent"
+    },
+    {
+      "name": "id_wrong_physics",
+      "target": "id",
+      "context": "wrong_sibling_same_command"
+    },
+    {
+      "name": "id_changed_source_command",
+      "target": "id",
+      "context": "matching_physics_changed_command"
+    },
+    {
+      "name": "source_appearance",
+      "target": "id",
+      "context": "matching_heldout_style"
+    },
+    {
+      "name": "geometry_matching",
+      "target": "geometry",
+      "context": "matching"
+    },
+    {
+      "name": "geometry_absent",
+      "target": "geometry",
+      "context": "absent"
+    }
+  ],
+  "geometry_extrapolation": {
+    "gate": {
+      "gate_y_absolute": [
+        0.5,
+        0.8
+      ],
+      "goal_y_absolute": [
+        0.8,
+        1.0
+      ]
+    },
+    "bank": {
+      "panel_yaw_absolute": [
+        0.36,
+        0.5
+      ],
+      "panel_pitch_absolute": [
+        0.2,
+        0.28
+      ],
+      "nominal_geometry_resampling": 0,
+      "nominal_command_search": "Try the original narrow sampled command, then a deterministic grid within the existing public action limits; geometry never resampled.",
+      "nominal_command_grid": {
+        "vx": [
+          1.6,
+          2.5,
+          3.5,
+          4.5,
+          5.4
+        ],
+        "vy": [
+          -1,
+          -0.5,
+          0,
+          0.5,
+          1
+        ],
+        "vz": [
+          2.2,
+          3.5,
+          5,
+          6.5,
+          7.8
+        ]
+      }
+    },
+    "ramp": {
+      "ramp_yaw_absolute": [
+        0.4,
+        0.6
+      ],
+      "ramp_tilt": [
+        0.4,
+        0.5
+      ]
+    }
+  },
+  "source_variants": {
+    "changed_command": {
+      "gate_velocity_delta": [
+        0.25,
+        -0.15,
+        0.25,
+        -0.2,
+        0.15,
+        -0.15
+      ],
+      "bank_velocity_delta": [
+        0.2,
+        0.15,
+        0.2
+      ],
+      "ramp_velocity_delta": [
+        0.35,
+        0.15
+      ],
+      "source_geometry_and_hidden_physics": "unchanged",
+      "source_numeric_input": "recompute_imposed_motion_with_changed_command"
+    },
+    "heldout_style": 3,
+    "training_styles": [
+      0,
+      1,
+      2
+    ],
+    "paired_family_source_command_equality": true,
+    "heldout_style_description": "Camera yaw beyond the trained range for all tasks; gate additionally changes the ground tint. This is not a new physical environment."
+  },
+  "execution_baselines": [
+    "source_command_copy",
+    "nominal_query_oracle",
+    "finite_known_physics_solver"
+  ],
+  "metrics": [
+    "full_constraint_success",
+    "endpoint_error",
+    "constraint_failures",
+    "action_clipping_rate",
+    "finer_timestep_success"
+  ],
+  "primary_comparisons": [
+    "video_matching_minus_same_weight_absent",
+    "full_matching_minus_same_weight_absent",
+    "video_matching_minus_independent_none",
+    "full_matching_minus_independent_none",
+    "full_minus_video"
+  ],
+  "uncertainty": {
+    "method": "paired_crossed_bootstrap_shared_seed_and_family_resamples",
+    "replicates": 10000,
+    "seed": 2309290000,
+    "interval": 0.95,
+    "report_each_training_seed": true,
+    "rationale": "Each training seed is evaluated on the same families; resample families once per replicate and share that resample across selected seeds. Preserve all eight sibling/query records within each family."
+  },
+  "figures": {
+    "main": "3x8_first_test_record_per_task_four_source_four_policy_frames",
+    "additional": [
+      "median_endpoint_error",
+      "first_failure"
+    ],
+    "reference_model": "video_seed0"
+  },
+  "no_checkpoint_or_hyperparameter_selection_using_test": true,
+  "identical_action_execution_reuse": "permitted only with exact command and target physics hashes; disclose reused counts",
+  "interpretation": "Known numerical target geometry and additional nominal-action supervision; one/two-shot open-loop control, not learned feedback navigation or neural video generation.",
+  "gate_crossing_rule": {
+    "aperture": "Interpolated left-to-right sphere-center crossing within the physical opening minus sphere radius; no rim contact.",
+    "crossing_horizon_seconds": [
+      0,
+      1.6
+    ],
+    "timed_proximity_seconds": 0.8,
+    "timed_proximity_tolerance_m": 0.22,
+    "endpoint_tolerance_m": 0.2,
+    "note": "No requirement of exact .8s crossing; original separate timing constraints retained."
+  },
+  "reference_controller": {
+    "version": 1,
+    "implementation": "finite_reference.py",
+    "applies_to": "every validation/test case with unchanged task and public bounds",
+    "algorithm_and_budget": "BUDGET in finite_reference.py, frozen with the code",
+    "ground_truth_action": false,
+    "certified_optimal": false,
+    "all_failures_retained": true,
+    "primary_timestep": "native",
+    "finer_timestep": "separate numerical sensitivity check using the same simulator",
+    "claims": "Observed simulator success on the full sampled population. Joint failure does not establish unreachability or model incapacity. No optimality gaps or fractions of reachable tasks.",
+    "required_crossings": [
+      "policy_success_reference_failure",
+      "reference_success_policy_failure",
+      "both_success",
+      "both_failure"
+    ],
+    "training_label_solvers": {
+      "bank": {
+        "version": 2,
+        "implementation": "bank_expert_v2.py",
+        "acceptance_timesteps_seconds": [
+          0.001,
+          0.0005
+        ],
+        "half_step_used_in_planning": true,
+        "uniform_retained_record_revalidation": true
+      },
+      "gate": {
+        "implementation": "gate_physics.planned_gate_action",
+        "same_algorithm_as_reference": true
+      },
+      "ramp": {
+        "implementation": "ramp_expert_v2.oracle",
+        "same_algorithm_as_reference": true
+      }
+    },
+    "algorithmic_independence": "Bank held-out search differs from its training solver. Gate/ramp reuse training expert routines; separate reference role does not imply independent algorithms."
+  },
+  "retain_all_sampled_cases_and_reference_failures": true,
+  "gate_stratum_reporting": "Report all prespecified mild/strong populations by seed and timestep, including paired demo gains. Retain all failures; bank/ramp have no such strata."
+}
